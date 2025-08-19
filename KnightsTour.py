@@ -56,22 +56,10 @@ def tour(path_r: list, path_c: list, start: tuple, board: list, n: int):
             if len(candidates) == 1:
                 next_move = candidates[0][1]
             else:
-                # 후보가 여러 개일 경우, 그 다음 칸의 최소 차수가 가장 작은 것을 선택
-                next_candidates = []
-                for candidate in candidates:
-                    count, (cr, cc) = candidate
-                    board[cr][cc] = True  # 현재 후보 칸 방문 처리
-                    min_next_degree = 9 # 최대 8방향이므로 9로 초기화. 다음 이동 가능 칸이 없을 경우 배제됨
-                    for dr, dc in directions:
-                        nr, nc = cr + dr, cc + dc
-                        if is_movable(nr, nc, n) and not board[nr][nc]:
-                            next_degree = degree(nr, nc, board, n)
-                            if next_degree < min_next_degree:
-                                min_next_degree = next_degree
-                    next_candidates.append((min_next_degree, (cr, cc)))
-                    board[cr][cc] = False  # 후보 칸 방문 처리 해제
-                    
-                next_move = min(next_candidates, key=lambda x: x[0])[1]
+                # 후보가 여러 개일 경우 중앙에서 가장 먼 후보를 선택
+                center = n // 2
+                candidates.sort(key=lambda x: abs(x[1][0] - center) + abs(x[1][1] - center), reverse=True)
+                next_move = candidates[0][1]
             
             board[next_move[0]][next_move[1]] = True
             path_r.append(next_move[0])
